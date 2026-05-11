@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  userName  String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  createdBy String?
+  role      Role     @default(User)
+}
+
+model Customer {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String?    @unique
+  address   String?
+  phone     String?
+  altPhone  String?
+  city      String?
+  state     String?
+  country   String?
+  createdAt DateTime   @default(now())
+  createdBy String?
+  contracts Contract[]
+}
+
+model Product {
+  id         Int       @id @default(autoincrement())
+  name       String
+  size       String?
+  imageUrl   String?
+  skuCode    String
+  createdAt  DateTime  @default(now())
+  createdBy  String?
+  contract   Contract? @relation(fields: [contractId], references: [id])
+  contractId Int?
+}
+
+model TermsOfPayment {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  createdBy String?
+  contracts Contract[]
+}
+
+model Contract {
+  id                     Int            @id @default(autoincrement())
+  name                   String
+  customerId             Int
+  customer               Customer       @relation(fields: [customerId], references: [id])
+  termsOfPaymentId       Int
+  termsOfPayment         TermsOfPayment @relation(fields: [termsOfPaymentId], references: [id])
+  createdAt              DateTime       @default(now())
+  createdBy              String
+  products               Product[]
+  countryOfOrigin        String
+  countryOfDestination   String
+  description            String?
+  packing                String?
+  insurance              String?
+  preCarriageBy          Carrier?
+  portOfLoading          String?
+  portOfFinalDestination String?
+  operatingAirlines      String?
+  speacialCondition      String?
+  note                   String?
+  expectedDepartureDate  DateTime?
+  expectedDeliveryDate   DateTime?
+}
+
+enum Carrier {
+  Sea
+  Air
+  Road
+}
+
+enum Role {
+  Admin
+  User
+}
