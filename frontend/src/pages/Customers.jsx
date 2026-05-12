@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { UserPlus, Search, Phone, MapPin, Mail, X, Loader2, Plus, Globe, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import CustomSelect from '../components/CustomSelect';
 
 export default function Customers() {
   const [customers, setCustomers] = useState([]);
@@ -118,84 +119,13 @@ export default function Customers() {
               />
             </div>
 
-            <div className="relative">
-              <button
-                onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-                className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-600 hover:border-gray-300 transition-all min-w-[180px] justify-between"
-              >
-                <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-[#003366]" />
-                  <span>{selectedCountry === 'All' ? 'All Countries' : selectedCountry}</span>
-                </div>
-                <motion.div
-                  animate={{ rotate: isCountryDropdownOpen ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Plus className={`w-3.5 h-3.5 transition-transform ${isCountryDropdownOpen ? 'rotate-45' : ''}`} />
-                </motion.div>
-              </button>
-
-              <AnimatePresence>
-                {isCountryDropdownOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-40"
-                      onClick={() => {
-                        setIsCountryDropdownOpen(false);
-                        setCountrySearchTerm('');
-                      }}
-                    />
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute top-full mt-2 w-full bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col"
-                    >
-                      <div className="p-2 border-b border-gray-50">
-                        <div className="relative">
-                          <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                          <input
-                            autoFocus
-                            type="text"
-                            placeholder="Search countries..."
-                            value={countrySearchTerm}
-                            onChange={(e) => setCountrySearchTerm(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2 text-xs font-semibold bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-[#003366]/20 transition-all"
-                          />
-                        </div>
-                      </div>
-                      <div className="max-h-60 overflow-y-auto custom-scrollbar py-1">
-                        {filterCountries
-                          .filter(c => c.toLowerCase().includes(countrySearchTerm.toLowerCase()))
-                          .map((country) => (
-                            <button
-                              key={country}
-                              onClick={() => {
-                                setSelectedCountry(country);
-                                setIsCountryDropdownOpen(false);
-                                setCountrySearchTerm('');
-                              }}
-                              className={`w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors flex items-center justify-between ${selectedCountry === country
-                                ? 'bg-blue-50 text-[#003366]'
-                                : 'text-gray-600 hover:bg-gray-50'
-                                }`}
-                            >
-                              {country === 'All' ? 'All Countries' : country}
-                              {selectedCountry === country && (
-                                <div className="w-1.5 h-1.5 rounded-full bg-[#003366]" />
-                              )}
-                            </button>
-                          ))}
-                        {filterCountries.filter(c => c.toLowerCase().includes(countrySearchTerm.toLowerCase())).length === 0 && (
-                          <div className="px-4 py-6 text-center text-xs text-gray-400 font-bold uppercase tracking-wider">
-                            No country found
-                          </div>
-                        )}
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
+            <div className="w-64">
+              <CustomSelect 
+                options={filterCountries.map(c => ({ id: c, name: c === 'All' ? 'All Countries' : c }))}
+                value={selectedCountry}
+                onChange={(val) => setSelectedCountry(val)}
+                placeholder="All Countries"
+              />
             </div>
           </div>
 
@@ -410,85 +340,12 @@ export default function Customers() {
                         />
                       </div>
                     </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-500 ml-1">Country</label>
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => setIsModalCountryDropdownOpen(!isModalCountryDropdownOpen)}
-                          className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] transition-all text-sm bg-gray-50/50"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Globe className="w-4 h-4 text-[#003366]" />
-                            <span className="text-gray-900 font-medium">{formData.country}</span>
-                          </div>
-                          <Plus className={`w-3.5 h-3.5 text-gray-400 transition-transform ${isModalCountryDropdownOpen ? 'rotate-45' : ''}`} />
-                        </button>
-
-                        <AnimatePresence>
-                          {isModalCountryDropdownOpen && (
-                            <>
-                              <div
-                                className="fixed inset-0 z-[70]"
-                                onClick={() => {
-                                  setIsModalCountryDropdownOpen(false);
-                                  setModalCountrySearchTerm('');
-                                }}
-                              />
-                              <motion.div
-                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                className="absolute bottom-full mb-2 w-full bg-white border border-gray-100 rounded-2xl shadow-2xl z-[80] overflow-hidden flex flex-col"
-                              >
-                                <div className="p-2 border-b border-gray-50">
-                                  <div className="relative">
-                                    <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                                    <input
-                                      autoFocus
-                                      type="text"
-                                      placeholder="Search countries..."
-                                      value={modalCountrySearchTerm}
-                                      onChange={(e) => setModalCountrySearchTerm(e.target.value)}
-                                      className="w-full pl-9 pr-4 py-2 text-xs font-semibold bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-[#003366]/20 transition-all"
-                                    />
-                                  </div>
-                                </div>
-                                <div className="max-h-48 overflow-y-auto custom-scrollbar py-1">
-                                  {allCountries
-                                    .filter(c => c.toLowerCase().includes(modalCountrySearchTerm.toLowerCase()))
-                                    .map((country) => (
-                                      <button
-                                        key={country}
-                                        type="button"
-                                        onClick={() => {
-                                          setFormData(prev => ({ ...prev, country }));
-                                          setIsModalCountryDropdownOpen(false);
-                                          setModalCountrySearchTerm('');
-                                        }}
-                                        className={`w-full text-left px-4 py-2.5 text-sm font-semibold transition-colors flex items-center justify-between ${formData.country === country
-                                          ? 'bg-blue-50 text-[#003366]'
-                                          : 'text-gray-600 hover:bg-gray-50'
-                                          }`}
-                                      >
-                                        {country}
-                                        {formData.country === country && (
-                                          <div className="w-1.5 h-1.5 rounded-full bg-[#003366]" />
-                                        )}
-                                      </button>
-                                    ))}
-                                  {allCountries.filter(c => c.toLowerCase().includes(modalCountrySearchTerm.toLowerCase())).length === 0 && (
-                                    <div className="px-4 py-6 text-center text-xs text-gray-400 font-bold uppercase tracking-wider">
-                                      No country found
-                                    </div>
-                                  )}
-                                </div>
-                              </motion.div>
-                            </>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </div>
+                    <CustomSelect 
+                      label="Country"
+                      options={allCountries.map(c => ({ id: c, name: c }))}
+                      value={formData.country}
+                      onChange={(val) => setFormData(p => ({ ...p, country: val }))}
+                    />
                   </div>
                 </div>
 

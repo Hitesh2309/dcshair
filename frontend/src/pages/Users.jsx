@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../utils/api';
 import { UserPlus, Search, MoreVertical, X, Loader2 } from 'lucide-react';
+import CustomSelect from '../components/CustomSelect';
 
 const API_BASE = 'http://localhost:5000/api';
 
@@ -129,18 +130,16 @@ export default function Users() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 ml-1">Role</label>
-                <select 
-                  name="role"
-                  value={formData.role}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] transition-all text-sm bg-white"
-                >
-                  <option value="User">Standard User</option>
-                  <option value="Admin">Administrator</option>
-                </select>
-              </div>
+              <CustomSelect 
+                label="Role"
+                options={[
+                  { id: 'User', name: 'Standard User' },
+                  { id: 'Admin', name: 'Administrator' }
+                ]}
+                value={formData.role}
+                onChange={(val) => setFormData(p => ({ ...p, role: val }))}
+                searchable={false}
+              />
 
               <div className="pt-4 flex gap-3">
                 <button 

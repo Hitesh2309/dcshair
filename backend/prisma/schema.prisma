@@ -37,15 +37,17 @@ model Customer {
 }
 
 model Product {
-  id         Int       @id @default(autoincrement())
-  name       String
-  size       String?
-  imageUrl   String?
-  skuCode    String
-  createdAt  DateTime  @default(now())
-  createdBy  String?
-  contract   Contract? @relation(fields: [contractId], references: [id])
-  contractId Int?
+  id            Int            @id @default(autoincrement())
+  name          String
+  size          String?
+  pricePerKg    Float          @default(0)
+  imageUrl      String?
+  skuCode       String
+  createdAt     DateTime       @default(now())
+  createdBy     String?
+  contract      Contract?      @relation(fields: [contractId], references: [id])
+  contractId    Int?
+  contractItems ContractItem[]
 }
 
 model TermsOfPayment {
@@ -79,6 +81,18 @@ model Contract {
   note                   String?
   expectedDepartureDate  DateTime?
   expectedDeliveryDate   DateTime?
+  contractItems          ContractItem[]
+}
+
+model ContractItem {
+  id          Int      @id @default(autoincrement())
+  contractId  Int
+  contract    Contract @relation(fields: [contractId], references: [id])
+  productId   Int
+  product     Product  @relation(fields: [productId], references: [id])
+  quantity    Float // In KGs
+  pricePerKg  Float
+  totalAmount Float
 }
 
 enum Carrier {

@@ -8,13 +8,15 @@ import {
   Settings,
   LogOut,
   Scissors,
-  Package
+  Package,
+  FileText
 } from 'lucide-react';
 
 const menuItems = [
   { name: 'Dashboard', path: '/', icon: LayoutDashboard },
   { name: 'Customers', path: '/customers', icon: UserCircle },
   { name: 'Products', path: '/products', icon: Package },
+  { name: 'Contracts', path: '/contracts', icon: FileText },
   { name: 'Users', path: '/users', icon: Users },
   { name: 'Settings', path: '/settings', icon: Settings },
 ];
