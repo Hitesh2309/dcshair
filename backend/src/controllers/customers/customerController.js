@@ -47,7 +47,22 @@ exports.createCustomer = async (req, res) => {
 
 exports.getCustomers = async (req, res) => {
   try {
-    const customers = await prisma.customer.findMany();
+    // const customers = await prisma.customer.findMany({
+    //    include: {
+    //     contracts: {
+    //       include: {
+    //         termsOfPayment: true,
+    //         products: true,
+    //       }
+    //     },
+    //     consignees: true,
+    //     buyers: true,
+    //     notifyParties: true,
+    //     contactPersons: true,
+    //   },
+    // });
+        const customers = await prisma.customer.findMany();
+
     res.json(customers);
   } catch (error) {
     res.status(500).json({ error: error.message });
