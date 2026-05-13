@@ -4,12 +4,15 @@ import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import Users from './pages/Users';
 import Customers from './pages/Customers';
+import AddCustomer from './pages/AddCustomer';
 import Products from './pages/Products';
 import Contracts from './pages/Contracts';
 import GenerateContract from './pages/GenerateContract';
 import Login from './pages/Login';
 import { AuthProvider } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import ProformaInvoice from './pages/ProformaInvoice';
+import ProformaInvoiceGenerate from './pages/ProformaInvoiceGenerate';
 
 function App() {
   return (
@@ -23,10 +26,13 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/users" element={<Users />} />
               <Route path="/customers" element={<Customers />} />
+              <Route path="/customers/add" element={<AddCustomer />} />
               <Route path="/products" element={<Products />} />
               <Route path="/contracts" element={<Contracts />} />
               <Route path="/contracts/generate" element={<GenerateContract />} />
               <Route path="/settings" element={<div className="p-8 bg-white rounded-2xl shadow-sm border border-gray-100 font-bold text-gray-400">Settings Page Under Construction</div>} />
+              <Route path="/proformainvoice" element={<ProformaInvoice/>} />
+              <Route path="/proformainvoice/generate" element={<ProformaInvoiceGenerate/>} />
             </Route>
           </Route>
 

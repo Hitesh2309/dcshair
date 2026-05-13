@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { UserPlus, Search, Phone, MapPin, Mail, X, Loader2, Plus, Globe, Home } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { UserPlus, Search, Phone, MapPin, Mail, Loader2, Globe } from 'lucide-react';
 import CustomSelect from '../components/CustomSelect';
 
 export default function Customers() {
+  const navigate = useNavigate();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('All');
-  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
-  const [isModalCountryDropdownOpen, setIsModalCountryDropdownOpen] = useState(false);
-  const [countrySearchTerm, setCountrySearchTerm] = useState('');
-  const [modalCountrySearchTerm, setModalCountrySearchTerm] = useState('');
-  const [error, setError] = useState('');
 
   // Predefined comprehensive country list
   const allCountries = [
@@ -23,17 +17,6 @@ export default function Customers() {
   ];
 
   const filterCountries = ['All', ...allCountries];
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    altPhone: '',
-    address: '',
-    city: '',
-    state: '',
-    country: 'India'
-  });
 
   const fetchCustomers = async () => {
     setLoading(true);
@@ -51,36 +34,6 @@ export default function Customers() {
     fetchCustomers();
   }, []);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError('');
-    try {
-      await api.post('/customers', formData);
-      setIsModalOpen(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        altPhone: '',
-        address: '',
-        city: '',
-        state: '',
-        country: 'India'
-      });
-      fetchCustomers();
-    } catch (err) {
-      setError(err.response?.data?.error || 'Failed to add customer. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const filteredCustomers = customers.filter(customer => {
     const matchesSearch = customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       customer.phone?.includes(searchTerm);
@@ -97,7 +50,7 @@ export default function Customers() {
           <p className="text-sm text-gray-500 mt-1">Directory of all salon clients and history</p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => navigate('/customers/add')}
           className="bg-[#003366] text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-[#004080] transition-all shadow-lg active:scale-95"
         >
           <UserPlus className="w-4 h-4" />
@@ -211,176 +164,6 @@ export default function Customers() {
           </table>
         </div>
       </div>
-
-      {/* Add Customer Modal */}
-      <AnimatePresence>
-        {isModalOpen && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white w-full max-w-2xl rounded-[2rem] shadow-2xl overflow-hidden relative z-10 border border-gray-100"
-            >
-              <div className="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/30">
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900">Add New Customer</h2>
-                  <p className="text-sm text-gray-500 mt-1">Fill in the details to create a new client profile</p>
-                </div>
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="p-2.5 hover:bg-white hover:shadow-sm rounded-xl text-gray-400 hover:text-gray-600 transition-all border border-transparent hover:border-gray-100"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmit} className="p-8">
-                {error && (
-                  <div className="mb-6 p-4 rounded-xl bg-red-50 text-red-600 text-sm font-bold border border-red-100 flex items-center gap-3">
-                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                    {error}
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Basic Info */}
-                  <div className="space-y-4">
-                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
-                      <UserPlus className="w-3 h-3" /> Basic Information
-                    </h3>
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-500 ml-1">Full Name *</label>
-                      <input
-                        required
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] transition-all text-sm bg-gray-50/50"
-                        placeholder="e.g. Parag Aggarwal"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-500 ml-1">Email Address</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] transition-all text-sm bg-gray-50/50"
-                        placeholder="parag@example.com"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-500 ml-1">Phone *</label>
-                        <input
-                          required
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] transition-all text-sm bg-gray-50/50"
-                          placeholder="9876543210"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-500 ml-1">Alt Phone</label>
-                        <input
-                          name="altPhone"
-                          value={formData.altPhone}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] transition-all text-sm bg-gray-50/50"
-                          placeholder="Optional"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Address Info */}
-                  <div className="space-y-4">
-                    <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
-                      <Home className="w-3 h-3" /> Address Details
-                    </h3>
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-500 ml-1">Street Address</label>
-                      <input
-                        name="address"
-                        value={formData.address}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] transition-all text-sm bg-gray-50/50"
-                        placeholder="Apartment, Street, Area"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-500 ml-1">City</label>
-                        <input
-                          name="city"
-                          value={formData.city}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] transition-all text-sm bg-gray-50/50"
-                          placeholder="e.g. Mumbai"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-xs font-bold text-gray-500 ml-1">State</label>
-                        <input
-                          name="state"
-                          value={formData.state}
-                          onChange={handleInputChange}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#003366]/10 focus:border-[#003366] transition-all text-sm bg-gray-50/50"
-                          placeholder="e.g. Maharashtra"
-                        />
-                      </div>
-                    </div>
-                    <CustomSelect 
-                      label="Country"
-                      options={allCountries.map(c => ({ id: c, name: c }))}
-                      value={formData.country}
-                      onChange={(val) => setFormData(p => ({ ...p, country: val }))}
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-10 flex gap-4 pt-6 border-t border-gray-50">
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="flex-1 px-4 py-3.5 rounded-xl font-bold text-sm text-gray-500 hover:bg-gray-100 transition-colors"
-                  >
-                    Discard
-                  </button>
-                  <button
-                    disabled={isSubmitting}
-                    type="submit"
-                    className="flex-[2] bg-[#003366] text-white px-4 py-3.5 rounded-xl font-bold text-sm hover:bg-[#004080] transition-all shadow-lg shadow-[#003366]/20 flex items-center justify-center gap-2 disabled:opacity-70 active:scale-95"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Saving Profile...
-                      </>
-                    ) : (
-                      <>
-                        <Plus className="w-4 h-4" />
-                        Create Customer Profile
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
-
