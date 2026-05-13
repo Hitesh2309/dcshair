@@ -817,9 +817,6 @@
 
 
 
-// 
-
-
 import { useState, useRef, useEffect } from "react";
 import {
     ArrowLeft, Plus, Trash2, FileText, Package,
@@ -831,9 +828,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import api from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CUSTOM SELECT  (unchanged from File 2)
-// ─────────────────────────────────────────────────────────────────────────────
+
 function CustomSelect({
     options = [], value, onChange, placeholder = "Select…", label,
     required = false, loading = false, disabled = false,

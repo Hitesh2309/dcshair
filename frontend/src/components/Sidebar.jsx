@@ -10,7 +10,8 @@ import {
   Scissors,
   Package,
   FileText,
-  Receipt 
+  Receipt,
+  AlertCircle , 
 } from 'lucide-react';
 
 const menuItems = [
@@ -21,6 +22,8 @@ const menuItems = [
   { name: 'Users', path: '/users', icon: Users },
   { name: 'Settings', path: '/settings', icon: Settings },
   { name: 'Proforma Invoice', path: '/proformainvoice', icon: Receipt },
+  { name: 'Payment Terms', path: '/payment-terms', icon: AlertCircle  },
+  
 ];
 
 export default function Sidebar() {
